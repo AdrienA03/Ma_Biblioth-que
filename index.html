@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma Bibliothèque en Ligne</title>
+
+    <style>
+        /* Votre CSS ici */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+        }
+        #bookList {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .series-container {
+            flex-basis: 100%;
+        }
+
+        .suggestion-bar {
+            white-space: nowrap;
+            overflow-x: auto;
+            max-width: 100%;
+            width: 100%; /* Ajoutez cette ligne */
+            border-top: 1px solid #ccc;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+
+        .suggestion-bar .book-item {
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        .book-item {
+            margin: 10px;
+        }
+
+        .book-item-selected {
+        border: 2px solid blue; /* Ajoutez la bordure bleue pour mettre en évidence */
+        }
+
+        /* Ajoutez une classe pour le bouton sélectionné */
+        .selected-button {
+            background-color: #4CAF50; /* Couleur de fond verte */
+            color: white; /* Texte blanc */
+            border-radius: 10px;
+            border: 2px solid #4CAF50; /* Bordure verte */
+            
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <h1>Bienvenue dans la Bibliothèque de Vanedrien
+        
+    </h1>
+
+    <form>
+        <label for="searchInput">Rechercher un livre :</label>
+        <input type="text" id="searchInput" placeholder="Titre du livre" oninput="searchBooks()">
+        <label for="genreSelect">Filtrer par genre :</label>
+        <select id="genreSelect" onchange="searchBooks()">
+            <option value="">Tous les genres</option>
+            <option value="Manga">Manga</option>
+            <option value="Comic">Comic</option>
+        </select>
+        <button type="button" onclick="searchBooks()">Rechercher</button>
+    </form>
+
+    <div id="bookList">
+        <!-- La liste des livres s'affichera ici -->
+    </div>
+
+    <div id="suggestionBars">
+        <!-- Les suggestions horizontales s'afficheront ici -->
+    </div>
+
+    <div id="userActions">
+        <h2>Votre sélection</h2>
+        <ul id="selectedBooks">
+            <!-- La liste des livres sélectionnés s'affichera ici -->
+        </ul>
+        <button type="button" onclick="borrowBooks()">Emprunter les livres sélectionnés</button>
+    </div>
+
+    <script>
+        var demonSlayerCollection = [];
+        for (var i = 1; i <= 23; i++) {
+            demonSlayerCollection.push({
+                id: "ds_" + i,
+                series: "Demon Slayer: Kimetsu no Yaiba",
+                volume: i,
+                title: "tome " + i,
+                author: "Koyoharu Gotouge",
+                available: true,
+                image: "Couvertures/DemonSlayer/DSlayer" + i + ".jpeg",
+                genre: 'Manga'
+            });
+        }
+
+        var onePunchmanCollection = [];
+        for (var i = 1; i <= 28; i++) {
+            onePunchmanCollection.push({
+                id: "opm_" + i,
+                series: "One Punch Man",
+                volume: i,
+                title: "tome " + i,
+                author: "ONE",
+                available: true,
+                image: "Couvertures/OnePunchMan/OPMan" + i + ".jpeg",
+                genre: 'Manga'
+            });
+        }
+
+        var mashleCollection = [];
+        for (var i = 1; i <= 17; i++) {
+            mashleCollection.push({
+                id: "mash_" + i,
+                series: "Mashle",
+                volume: i,
+                title: "tome " + i,
+                author: "Hajime Komoto",
+                available: true,
+                image: "Couvertures/Mashle/Mashle" + i + ".jpeg",
+                genre: 'Manga'
+            });
+        }
+
+        var jujutsuKaisenCollection = [];
+        for (var i = 1; i <= 21; i++) {
+            jujutsuKaisenCollection.push({
+                id: "jjk_" + i,
+                series: "Jujutsu Kaisen",
+                volume: i,
+                title: "tome " + i,
+                author: "Gege Akutami",
+                available: true,
+                image: "Couvertures/JujutsuKaisen/JJK" + i + ".jpeg",
+                genre: 'Manga'
+            });
+        }
+
+        var valkyrieApocalypseCollection = [];
+        for (var i = 1; i <= 17; i++) {
+            valkyrieApocalypseCollection.push({
+                id: "VA_" + i,
+                series: "Valkyrie Apocalypse",
+                volume: i,
+                title: "tome " + i,
+                author: "Shinya Umemura, Takumi Fukui, Ajichika",
+                available: true,
+                image: "Couvertures/ValkyrieApocalypse/VA" + i + ".jpeg",
+                genre: 'Manga'
+            });
+        }
+
+        var attackOnTitanCollection = [];
+        for (var i = 1; i <= 12; i++) {
+            attackOnTitanCollection.push({
+                id: "AOT_" + i,
+                series: "Attaque des Titans",
+                volume: i,
+                title: "tome " + i,
+                author: "Hajime Isayama",
+                available: true,
+                image: "Couvertures/AttackOnTitan/SNK" + i + ".jpeg",
+                genre: 'Manga'
+            });
+        }
+
+        var flashnew52Collection = [];
+        for (var i = 1; i <= 7; i++) {
+            flashnew52Collection.push({
+                id: "flashnew52_" + i,
+                series: "Flash New 52",
+                volume: i,
+                title: "tome " + i,
+                author: "Francis Manapul, Brian Buccellato",
+                available: true,
+                image: "Couvertures/Comics/FlashNew52/Fl" + i + ".jpeg",
+                genre: 'Comic'
+            });
+        }
+
+        var flashrebirthCollection = [];
+        for (var i = 1; i <= 9; i++) {
+            flashrebirthCollection.push({
+                id: "Flash_R_" + i,
+                series: "Flash Rebirth",
+                volume: i,
+                title: "tome " + i,
+                author: "Joshua Williamson, Howard Porter", 
+                available: true,
+                image: "Couvertures/Comics/FlashRebirth/FlR" + i + ".jpeg",
+                genre: 'Comic'
+            });
+        }
+
+        var aquamannew52Collection = [];
+        for (var i = 1; i <= 2; i++) {
+            aquamannew52Collection.push({
+                id: "Aqua_" + i,
+                series: "Aquaman New 52",
+                volume: i,
+                title: "tome " + i,
+                author: "Geoff Johns, Ivan Reis, Paul Pelletier, Joe Prado",
+                available: true,
+                image: "Couvertures/Comics/AquamanNew52/Aq" + i + ".jpeg",
+                genre: 'Comic'
+            });
+        }
+
+        var aquamanrebirthCollection = [];
+        for (var i = 1; i <= 5; i++) {
+            aquamanrebirthCollection.push({
+                id: "Aqua_R_" + i,
+                series: "Aquaman Rebirth",
+                volume: i,
+                title: "tome " + i,
+                author: "Dan Abnett",
+                available: true,
+                image: "Couvertures/Comics/AquamanRebirth/AqR" + i + ".jpeg",
+                genre: 'Comic'
+            });
+        }
+
+        var justiceleaguenew52Collection = [];
+        for (var i = 1; i <= 4; i++) {
+            justiceleaguenew52Collection.push({
+                id: "justiceLnew52_" + i,
+                series: "Justice League New 52",
+                volume: i,
+                title: "tome " + i,
+                author: "Geoff Johns, Jim Lee",
+                available: true,
+                image: "Couvertures/Comics/JusticeLeagueNew52/JL" + i + ".jpeg",
+                genre: 'Comic'
+            });
+        }
+
+        var supermanrebirthCollection = [];
+        for (var i = 1; i <= 6; i++) {
+            supermanrebirthCollection.push({
+                id: "Superman_R_" + i,
+                series: "Superman Rebirth",
+                volume: i,
+                title: "tome " + i,
+                author: "Brian Michael Bendis, Ivan Reis",
+                available: true,
+                image: "Couvertures/Comics/SupermanRebirth/SupR" + i + ".jpeg",
+                genre: 'Comic'
+            });
+        }
+
+        var supermanclarkkentCollection = [];
+        for (var i = 1; i <= 6; i++) {
+            supermanclarkkentCollection.push({
+                id: "SupermanCK_" + i,
+                series: "Superman : Clark Kent",
+                volume: i,
+                title: "tome " + i,
+                author: "Francis Manapul, Brian Buccellato",
+                available: true,
+                image: "Couvertures/Comics/SupermanCKent/SupCK" + i + ".jpeg",
+                genre: 'Comic'
+            });
+        }
+
+        var hulkCollection = [];
+        for (var i = 1; i <= 6; i++) {
+            hulkCollection.push({
+                id: "Hulk_" + i,
+                series: "Hulk",
+                volume: i,
+                title: "tome " + i,
+                author: "Greg Pak, Carlo Pagulayan, Aaron Lopresti",
+                available: true,
+                image: "Couvertures/Comics/Hulk/HIm" + i + ".jpeg",
+                genre: 'Comic'
+            });
+        }
+
+        var injusticeCollection = [];
+        for (var i = 1; i <= 11; i++) {
+            injusticeCollection.push({
+                id: "Injustice_" + i,
+                series: "Injustice",
+                volume: i,
+                title: "tome " + i,
+                author: "Tom Taylor",
+                available: true,
+                image: "Couvertures/Comics/Injustice/Inj" + i + ".jpeg",
+                genre: 'Comic'
+            });
+        }
+
+        var batmanmetalCollection = [];
+        for (var i = 1; i <= 3; i++) {
+            batmanmetalCollection.push({
+                id: "Batman_Metal_" + i,
+                series: "Batman Metal",
+                volume: i,
+                title: "tome " + i,
+                author: "Scott Snyder, James Tynion IV, Stjepan Sejic, Greg Capullo",
+                available: true,
+                image: "Couvertures/Comics/BatmanMetal/BM" + i + ".jpeg",
+                genre: 'Comic'
+            });
+        }
+
+        // Ajouter les nouvelles collections à la liste globale
+        var allCollections = [
+            demonSlayerCollection,
+            onePunchmanCollection,
+            mashleCollection,
+            jujutsuKaisenCollection,
+            valkyrieApocalypseCollection,
+            attackOnTitanCollection,
+            flashnew52Collection,
+            flashrebirthCollection,
+            aquamannew52Collection,
+            aquamanrebirthCollection,
+            justiceleaguenew52Collection,
+            supermanrebirthCollection,
+            supermanclarkkentCollection,
+            hulkCollection,
+            batmanmetalCollection,
+            injusticeCollection
+        ];
+
+        // Affichage initial
+        displayBooks(getAllBooks());
+
+        function getAllBooks() {
+            // Concaténer toutes les collections de mangas et de comics
+            return allCollections.reduce((allBooks, collection) => allBooks.concat(collection), []);
+        }
+
+        function displayBooks(books) {
+            var bookListDiv = document.getElementById('bookList');
+            var suggestionBarsDiv = document.getElementById('suggestionBars');
+
+            // Effacez les anciennes suggestions et livres
+            bookListDiv.innerHTML = '';
+            suggestionBarsDiv.innerHTML = '';
+
+            // Regroupez les livres par série
+            var booksBySeries = groupBooksBySeries(books);
+
+            // Triez les séries par ordre alphabétique
+            booksBySeries.sort(function(a, b) {
+                return a[0].series.localeCompare(b[0].series);
+            });
+
+            // Affichez chaque série avec ses livres
+            booksBySeries.forEach(function(seriesBooks) {
+                var seriesContainer = document.createElement('div');
+                seriesContainer.className = 'series-container';
+
+                // Titre de la série avec le nom de l'auteur
+                var seriesTitle = document.createElement('h2');
+                seriesTitle.textContent = `${seriesBooks[0].series} - ${seriesBooks[0].author}`;
+                seriesContainer.appendChild(seriesTitle);
+
+                // Triez les livres de la série par numéro de tome
+                seriesBooks.sort(function(a, b) {
+                    return a.volume - b.volume;
+                });
+
+                var suggestionBar = document.createElement('div');
+                suggestionBar.className = 'suggestion-bar';
+
+                seriesBooks.forEach(function(book) {
+                    var bookItem = document.createElement('div');
+                    bookItem.className = 'book-item';
+                    bookItem.innerHTML = `
+                    <strong><center>${book.series}</center>
+                    <br>
+                    <center>Tome ${book.volume}</center></strong>
+                    <br>
+                    <center> <img src="${book.image}" alt="${book.title}" style="max-width: 100px; max-height: 150px;"> </center>
+                    <br>
+                    <center> <button type="button" data-book-id="${book.id}" onclick="selectBook('${book.id}')">Sélectionner</button> </center>
+                `;             
+                    suggestionBar.appendChild(bookItem);
+                    
+                });
+            
+                seriesContainer.appendChild(suggestionBar);
+                suggestionBarsDiv.appendChild(seriesContainer);
+            });
+        }
+
+        function groupBooksBySeries(books) {
+            // Utilisez un objet pour regrouper les livres par série
+            var groupedBooks = {};
+
+            books.forEach(function(book) {
+                if (!groupedBooks[book.series]) {
+                    groupedBooks[book.series] = [];
+                }
+
+                groupedBooks[book.series].push(book);
+            });
+
+            // Convertissez l'objet en un tableau d'arrays
+            return Object.values(groupedBooks);
+        }
+
+        function searchBooks() {
+            var searchInput = document.getElementById('searchInput').value.toLowerCase();
+            var genreSelect = document.getElementById('genreSelect');
+            var selectedGenre = genreSelect.options[genreSelect.selectedIndex].value;
+            var suggestedBooks = getSuggestedBooks(searchInput, selectedGenre);
+            displayBooks(suggestedBooks);
+        }
+
+        function getSuggestedBooks(searchTerm, genre) {
+            // Convertir le terme de recherche en minuscules pour une correspondance insensible à la casse
+            searchTerm = searchTerm.toLowerCase();
+
+            // Concaténer les collections de mangas et de comics en fonction du genre sélectionné
+            var allBooks = getAllBooks();
+            var filteredBooks = allBooks.filter(function(book) {
+                return (
+                    (book.title.toLowerCase().includes(searchTerm) ||
+                    (book.series.toLowerCase() + " " + book.volume).includes(searchTerm) ||
+                    book.author.toLowerCase().includes(searchTerm)) &&
+                    (!genre || book.genre === genre)
+                );
+            });
+
+            return filteredBooks;
+        }
+
+        var selectedBooks = [];
+
+        function selectBook(bookId) {
+            // Recherchez le livre dans la collection appropriée
+            var allBooks = getAllBooks();
+            var book = allBooks.find(function(book) {
+                return book.id === bookId && book.available;
+            });
+
+            if (book) {
+                selectedBooks.push(book);
+                book.available = false; // Marquer le livre comme non disponible
+                displaySelectedBooks();
+
+                // Obtenez le bouton correspondant au livre sélectionné
+                var selectedButton = document.querySelector(`[data-book-id="${bookId}"]`);
+
+                // Ajoutez la classe au bouton sélectionné
+                if (selectedButton) {
+                    selectedButton.classList.add('selected-button');
+                }
+            } else {
+                alert("Ce livre n'est pas disponible.");
+            }
+        }
+
+
+        function displaySelectedBooks() {
+            var selectedBooksList = document.getElementById('selectedBooks');
+            selectedBooksList.innerHTML = '';
+
+            selectedBooks.forEach(function(book) {
+                var bookItem = document.createElement('li');
+                bookItem.textContent = `${book.series} - ${book.title} (${book.author})`;
+                selectedBooksList.appendChild(bookItem);
+            });
+        }
+
+        function borrowBooks() {
+            // Ici, vous pourriez implémenter la logique pour enregistrer les emprunts dans une base de données, par exemple
+            alert("Livres empruntés avec succès !");
+
+            // Ici, vous pourriez implémenter la logique pour enregistrer les emprunts dans une base de données, par exemple
+
+            // Construire un tableau d'objets avec des détails sur les livres empruntés
+            const borrowedBooksDetails = selectedBooks.map(book => {
+                return {
+                    title: book.title,
+                    series: book.series,
+                    image: book.image
+                };
+            });
+
+            // Convertir le tableau d'objets en une chaîne JSON pour l'URL
+            const borrowedBooksJSON = JSON.stringify(borrowedBooksDetails);
+
+            // Redirection vers la page de récapitulatif avec les paramètres nécessaires
+            window.location.href = 'recapitulatif.html?livres=' + encodeURIComponent(selectedBooks.map(book => `${book.series} - Tome ${book.volume}`).join(', ')) +
+                '&images=' + encodeURIComponent(borrowedBooksDetails.map(book => book.image).join(', '));
+        }
+    </script>

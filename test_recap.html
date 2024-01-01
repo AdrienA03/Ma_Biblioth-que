@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Récapitulatif des Livres Empruntés</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+        }
+        #recapitulatif {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Récapitulatif des Livres Empruntés</h1>
+
+    <div id="recapitulatif">
+        <!-- Le contenu sera ajouté ici via JavaScript -->
+    </div>
+
+    <script>
+        // Récupérer les paramètres de l'URL
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        // Vérifier si les paramètres nécessaires sont présents
+        if (urlParams.has('livres') && urlParams.has('images')) {
+            // Récupérer les valeurs des paramètres
+            const livresEmpruntes = urlParams.get('livres');
+            const imagesLivres = urlParams.get('images');
+
+            // Afficher les livres empruntés dans votre page
+            const recapitulatifDiv = document.getElementById('recapitulatif');
+            recapitulatifDiv.innerHTML = `<p>Livres empruntés :</p><ul>${formatLivresEmpruntes(livresEmpruntes, imagesLivres)}</ul>`;
+        } else {
+            // Afficher un message d'erreur si les paramètres ne sont pas présents
+            const recapitulatifDiv = document.getElementById('recapitulatif');
+            recapitulatifDiv.textContent = 'Paramètres manquants dans l\'URL.';
+        }
+
+        // Fonction pour formater la liste des livres empruntés avec images
+        function formatLivresEmpruntes(livresEmpruntes, imagesLivres) {
+            const livresArray = livresEmpruntes.split(', ');
+            const imagesArray = imagesLivres.split(', ');
+
+            let formattedBooks = '';
+            
+            for (let i = 0; i < livresArray.length; i += 2) {
+                const [serie1, tome1] = livresArray[i].split(' - ');
+                const imageURL1 = imagesArray[i];
+                
+                let bookDiv1 = `<div style="text-align: center; margin-bottom: 20px;">${serie1} - Tome ${tome1}</div><img src="${imageURL1}" alt="${serie1} - Tome ${tome1}" style="max-width: 100px; max-height: 150px; margin-bottom: 10px;">`;
+
+                let bookDiv2 = '';  // Initialize an empty string for the second book
+                
+                if (i + 1 < livresArray.length) {
+                    const [serie2, tome2] = livresArray[i + 1].split(' - ');
+                    const imageURL2 = imagesArray[i + 1];
+                    
+                    bookDiv2 = `<div style="text-align: center; margin-bottom: 20px;">${serie2} - Tome ${tome2}</div><img src="${imageURL2}" alt="${serie2} - Tome ${tome2}" style="max-width: 100px; max-height: 150px; margin-bottom: 10px;">`;
+                }
+
+                formattedBooks += `<div style="display: flex; flex-direction: column; align-items: center;">${bookDiv1}${bookDiv2}</div>`;
+            }
+
+            return formattedBooks;
+        }
+
+
+
+    </script>
+
+</body>
+</html>
